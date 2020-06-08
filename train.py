@@ -29,7 +29,7 @@ flags.DEFINE_enum('mode', 'fit', ['fit', 'eager_fit', 'eager_tf'],
                   'eager_fit: model.fit(run_eagerly=True), '
                   'eager_tf: custom GradientTape')
 flags.DEFINE_enum('transfer', 'none',
-                  ['none', 'darknet', 'no_output', 'frozen', 'fine_tune'],
+                  ['none', 'darknet', 'no_freeze_darknet','no_output', 'frozen', 'fine_tune'],
                   'none: Training from scratch, '
                   'darknet: Transfer darknet, '
                   'no_output: Transfer all but output, '
@@ -83,7 +83,7 @@ def main(_argv):
     # Configure the model for transfer learning
     if FLAGS.transfer == 'none':
         pass  # Nothing to do
-    elif FLAGS.transfer in ['darknet', 'no_output']:
+    elif FLAGS.transfer in ['darknet', 'no_output', 'no_freeze_darknet']:
         # Darknet transfer is a special case that works
         # with incompatible number of classes
 
@@ -100,6 +100,10 @@ def main(_argv):
             model.get_layer('yolo_darknet').set_weights(
                 model_pretrained.get_layer('yolo_darknet').get_weights())
             freeze_all(model.get_layer('yolo_darknet'))
+
+        elif FLAGS.transfer == 'no_freeze_darknet':
+            model.get_layer('yolo_darknet').set_weights(
+                model_pretrained.get_layer('yolo_darknet').get_weights())
 
         elif FLAGS.transfer == 'no_output':
             for l in model.layers:
@@ -175,8 +179,8 @@ def main(_argv):
                       run_eagerly=(FLAGS.mode == 'eager_fit'))
 
         callbacks = [
-            ReduceLROnPlateau(verbose=1),
-            EarlyStopping(patience=3, verbose=1),
+            ReduceLROnPlateau(patience=3, verbose=1),
+            EarlyStopping(patience=6, verbose=1, restore_best_weights=True),
             ModelCheckpoint('checkpoints/yolov3_train_{epoch}.tf',
                             verbose=1, save_weights_only=True),
             TensorBoard(log_dir='logs')

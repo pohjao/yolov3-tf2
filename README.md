@@ -1,4 +1,13 @@
-# YoloV3 Implemented in TensorFlow 2.0
+
+
+# YoloV3-COCO transfer learning to AU-AIR
+
+# TODO
+- [ ] yolo_anchors to respect given size
+- [ ] replace default values to point into au-air dataset
+- [ ] notebook
+- [ ] import data from https://github.com/VisDrone/VisDrone-Dataset
+- [ ] map as as valuation method
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zzh8829/yolov3-tf2/blob/master/colab_gpu.ipynb)
 
@@ -58,10 +67,7 @@ sudo apt install nvidia-driver-430
 https://www.nvidia.com/Download/index.aspx
 ```
 
-### Convert pre-trained Darknet weights
-
-```bash
-# yolov3
+### Convert pre-trained yolo good loss
 wget https://pjreddie.com/media/files/yolov3.weights -O data/yolov3.weights
 python convert.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf
 
