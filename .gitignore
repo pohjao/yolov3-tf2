@@ -138,3 +138,7 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python
+
+#repo sepecific
+.vscode/
+chekpoint_store/
